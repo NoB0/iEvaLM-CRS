@@ -305,9 +305,7 @@ if __name__ == "__main__":
     response_generation_args = {}
     if args.crs_model == "unicrs":
         response_generation_args = {
-            "movie_token": (
-                "<movie>" if args.kg_dataset.startswith("redial") else "<mask>"
-            ),
+            "movie_token": "<pad>",
         }
 
     # Start CRS Flask server

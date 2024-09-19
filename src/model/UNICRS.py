@@ -421,7 +421,7 @@ class UNICRS:
         }
 
         gen_seqs = self.model.generate(**input_batch["context"], **gen_args)
-        gen_str = self.tokenizer.decode(gen_seqs[0], skip_special_tokens=True)
+        gen_str = self.tokenizer.decode(gen_seqs[0], skip_special_tokens=False)
 
         return input_batch, gen_str
 
@@ -450,7 +450,7 @@ class UNICRS:
         id2entity: Dict[int, str],
         options: Tuple[str, Dict[str, str]],
         state: List[float],
-        movie_token: str = "<mask>",
+        movie_token: str = "<pad>",
     ) -> Tuple[str, List[float]]:
         """Generates a response given a conversation context.
 
@@ -465,7 +465,7 @@ class UNICRS:
             id2entity: Mapping from entity ID to entity name.
             options: Prompt with options and dictionary of options.
             state: State of the option choices.
-            movie_token: Mask token for the movie. Defaults to "<mask>".
+            movie_token: Mask token for the movie. Defaults to "<pad>".
 
         Returns:
             Generated response and updated state.
@@ -496,10 +496,14 @@ class UNICRS:
             generated_response = generated_response[
                 generated_response.rfind("System:") + len("System:") + 1 :
             ]
+            generated_response = generated_response.replace(
+                "<|endoftext|>", ""
+            )
+
             for i in range(str.count(generated_response, movie_token)):
                 try:
                     generated_response = generated_response.replace(
-                        movie_token, id2entity[recommended_items[i]], 1
+                        movie_token, id2entity[recommended_items[0][i]], 1
                     )
                 except IndexError as e:
                     logging.error(e)

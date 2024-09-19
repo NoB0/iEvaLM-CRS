@@ -48,11 +48,7 @@ class CRSFighter:
         if self.name.split("_")[0] == "unicrs":
             self.response_generation_args.update(
                 {
-                    "movie_token": (
-                        "<movie>"
-                        if self.model.crs_model.kg_dataset.startswith("redial")
-                        else "<mask>"
-                    ),
+                    "movie_token": "<pad>",
                 }
             )
 
